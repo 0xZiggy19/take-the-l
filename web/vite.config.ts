@@ -6,5 +6,5 @@ export default defineConfig({
   base: "./",
   plugins: [react()],
   define: { global: "globalThis" },
-  build: { target: "es2022", chunkSizeWarningLimit: 2000 },
+  build: { target: ["es2020", "safari14", "chrome87", "firefox78"], chunkSizeWarningLimit: 2000 },
 });
