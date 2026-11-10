@@ -7,7 +7,7 @@ Built at **NEAR HACKATHON 2026**. Track: **Social Money** (`social`).
 | | |
 |---|---|
 | Live contract (testnet) | [`takethel-eadf0a.testnet`](https://testnet.nearblocks.io/address/takethel-eadf0a.testnet) |
-| Hosted app | [0xziggy19.github.io/take-the-l](https://0xziggy19.github.io/take-the-l/) (NEAR testnet) |
+| Hosted app | [take-the-l-near.vercel.app](https://take-the-l-near.vercel.app) (NEAR testnet; mirror: [0xziggy19.github.io/take-the-l](https://0xziggy19.github.io/take-the-l/)) |
 | Demo video / X post | _TBD_ |
 | Contract design | [docs/DESIGN.md](docs/DESIGN.md) |
 | Recorded testnet runs | [docs/testnet-demo.md](docs/testnet-demo.md), [docs/e2e-results.json](docs/e2e-results.json) |
