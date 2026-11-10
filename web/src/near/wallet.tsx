@@ -117,14 +117,52 @@ async function setupSelector(setAccountId: (a: string | null) => void) {
       setAccountId(null);
     },
     call: async (method: string, args: object, deposit = 0n): Promise<TxResult> => {
-      const w = await selector.wallet();
-      const outcome = await w.signAndSendTransaction({
-        receiverId: CONTRACT_ID,
-        actions: [actionCreators.functionCall(method, args, GAS, deposit)],
-      });
-      return decodeOutcome(outcome);
+      // Must run before the first await so it is still inside the tap's user gesture (see preopenWalletPopup).
+      const pre = preopenWalletPopup(selector.store.getState().selectedWalletId, deposit);
+      try {
+        const w = await selector.wallet();
+        const outcome = await w.signAndSendTransaction({
+          receiverId: CONTRACT_ID,
+          actions: [actionCreators.functionCall(method, args, GAS, deposit)],
+        });
+        return decodeOutcome(outcome);
+      } finally {
+        closeIfUnused(pre);
+      }
     },
   };
+}
+
+/**
+ * MyNearWallet opens its signing popup with `window.open(url, "MyNearWallet")` only after fetching a recent block.
+ * By then iOS Safari (and other strict popup blockers) no longer count it as part of the user's tap and block it.
+ * So when MyNearWallet will need its popup (any call with a deposit, or no function-call key for this contract),
+ * we open an empty window with the same name synchronously in the tap. MyNearWallet's later `window.open` with that
+ * name reuses this window and navigates it to the signing page. Other wallets are left alone.
+ */
+function preopenWalletPopup(walletId: string | null, deposit: bigint): Window | null {
+  if (walletId !== "my-near-wallet") return null;
+  let keyCanSign = false;
+  try {
+    const k = JSON.parse(localStorage.getItem("functionCallKey") ?? "null");
+    keyCanSign = k?.contractId === CONTRACT_ID;
+  } catch { /* no key */ }
+  if (deposit === 0n && keyCanSign) return null; // signed locally with the function-call key: no popup
+  const left = Math.max(0, (window.innerWidth - 480) / 2);
+  const top = Math.max(0, (window.innerHeight - 640) / 2);
+  const w = window.open("", "MyNearWallet", `width=480,height=640,top=${top},left=${left}`);
+  try {
+    w?.document.write('<meta name="viewport" content="width=device-width"><body style="background:#0b0b0f;color:#f5f5f5;font:16px system-ui;padding:32px">Opening MyNearWallet…</body>');
+  } catch { /* ignore */ }
+  return w;
+}
+
+/** Close the pre-opened window if the wallet never navigated it (e.g. an error before signing). */
+function closeIfUnused(w: Window | null) {
+  if (!w || w.closed) return;
+  try {
+    if (w.location.href === "about:blank") w.close();
+  } catch { /* cross-origin: the wallet is using it */ }
 }
 
 /**

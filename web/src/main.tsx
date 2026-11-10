@@ -1,3 +1,4 @@
+import "./polyfills"; // must stay first: wallet libraries need a global Buffer
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@fontsource/archivo-black";

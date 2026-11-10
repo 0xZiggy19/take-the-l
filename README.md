@@ -95,7 +95,14 @@ stateDiagram-v2
 
 ## 4. Try it in 3 minutes (hosted app, phone or desktop)
 
-**You need:** a free NEAR **testnet** account. Create one at https://testnet.mynearwallet.com (no real money). If it has no NEAR, get free testnet NEAR at https://near-faucet.io. Steps 1–5 need no wallet.
+**You need:** a free NEAR **testnet** account with a little free testnet NEAR. No real money is involved anywhere. Steps 1–5 need no wallet.
+
+**Getting free testnet NEAR**
+1. Create a testnet account (name ends in `.testnet`) in a wallet, for example https://testnet.mynearwallet.com.
+2. Open the official NEAR faucet at https://docs.near.org/getting-started/faucet, enter your `.testnet` account, and tap **Request**. You'll receive free testnet NEAR. If it's rate-limited or empty, use https://near-faucet.io instead.
+3. 1 testnet NEAR is plenty. A fade is at least 0.01 NEAR and a call at least 0.1 NEAR, plus well under 0.01 NEAR of gas and storage.
+
+**About connecting your wallet.** Connecting adds a small "function-call" access key to your account that can only call this contract, so no-deposit actions (W, L, ghost, collect) don't need a wallet popup. Adding that key is itself a transaction, so your account needs a little testnet NEAR for gas (a tiny fraction of 1 NEAR) before you connect. MyNearWallet shows an **allowance of 0.25 NEAR** on that key: that is the maximum the key may spend on gas over its lifetime, **not** an upfront charge. Nothing is deducted until a transaction actually burns gas. Calls that move NEAR (create, fade) always open the wallet for your approval.
 
 | # | Do | See |
 |---|---|---|
@@ -189,6 +196,7 @@ export CONTRACT=takethel-eadf0a.testnet CALLER=caller-$USER-ttl.testnet FADER1=f
 | `DAO_NAME=ttl-$USER ./scripts/dao-demo.sh` (about 1 minute; FADER1 needs about 9 testnet NEAR) | It creates a Sputnik DAO through `sputnikv2.testnet` with FADER1 and FADER2 as the council. The DAO fades a call by proposal and two votes (`"status": "Approved"`), the caller takes the L, and the DAO collects ("claimable after: \"0\""). Then the DAO posts its own LIVE call. A recorded run is in [docs/dao-demo.md](docs/dao-demo.md). |
 | `cd web && npm run build:e2e && (npx vite preview --outDir dist-e2e --port 4174 &) && BASE=http://localhost:4174 npm run e2e` | Headless Chrome drives the real UI against testnet: `24/24 passed`. It covers create, fade, W, an over-fade capped at the stake, L and collect, the fade form closing at the cutoff, ghosting, the read-only feed, filters, the scoreboard, profiles, share links and the mobile layout. The results go to `docs/e2e-results.json`, with tx links, and the screenshots to `docs/screenshots/`. |
 | `npx vite preview --port 4173 &` then `BASE=http://localhost:4173 npm run e2e:wallet` (in `web/`, after `npm run build`) | `"found": ["MyNearWallet", "Meteor Wallet", "HOT Wallet", "Intear Wallet"]` and `"pageErrors": []`. |
+| `BASE=http://localhost:4173 ENGINES=chromium npm run e2e:tx` (same preview server) | Regression test for wallet transactions in the production build, with Node globals (`Buffer`, `process`, `global`) removed from the page. It uses a fake MyNearWallet session with a random throwaway key: fade and create must open the MyNearWallet `/sign` popup with a decodable transaction, and "I take the L" must be signed locally with the function-call key (the send is intercepted and never reaches the chain). Expect `"passed": 10, "total": 10`. Add `webkit` to `ENGINES` to also run it in Safari's engine if Playwright WebKit is installed. Nothing is signed for real and no NEAR moves. |
 
 The e2e build (`VITE_E2E_KEY_SIGNER=1`) signs with test keys that the test runner reads from `~/.near-credentials` at runtime. That code is not included in the normal `npm run build`.
 
@@ -205,7 +213,7 @@ tests/integration.rs      5 sandbox tests (near-sandbox + near-api)
 scripts/demo-testnet.sh   CLI end-to-end run on testnet, including rejection checks
 scripts/dao-demo.sh       Sputnik DAO as fader and caller on testnet
 web/src/                  React app: pages/ (Feed, Create, ClaimPage, Profile, Board), near/ (rpc, wallet)
-web/e2e/                  headless Chrome flows (flows.mjs, wallet-modal.mjs)
+web/e2e/                  headless browser tests (flows.mjs, wallet-modal.mjs, wallet-tx.mjs)
 docs/                     design notes, recorded runs, screenshots, demo video credits
 .github/workflows/        CI: cargo fmt, clippy, cargo test, web build
 ```
@@ -235,7 +243,8 @@ docs/                     design notes, recorded runs, screenshots, demo video c
 - **Frontend:**
   - `react` and `react-dom` 19.3, `react-router-dom` 7.18, `vite` 8.3 and `typescript` 7.0
   - `@near-wallet-selector/*` 10.1.4: core, modal-ui, my-near-wallet, meteor-wallet, hot-wallet and intear-wallet
-  - `near-api-js` 7.4, used only by the e2e signer
+  - `near-api-js` 7.4, used only by the e2e signer and the tests
+  - `buffer` 6.0.3: installs a browser `Buffer` before any wallet code loads (`web/src/polyfills.ts`), because the wallet libraries expect Node's global `Buffer`
   - Fonts via `@fontsource`: Archivo Black, Space Grotesk and JetBrains Mono
 - **Tooling:** `near-cli-rs` 0.31.1, `playwright-core` 1.65 with Google Chrome, and `oxlint`.
 - **On-chain dependency:** the Sputnik DAO v2 factory `sputnikv2.testnet` ([near-daos/sputnik-dao-contract](https://github.com/near-daos/sputnik-dao-contract)), used only by `scripts/dao-demo.sh`.

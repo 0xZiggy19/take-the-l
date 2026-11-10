@@ -11,6 +11,7 @@
     "build:e2e": "VITE_E2E_KEY_SIGNER=1 vite build --outDir dist-e2e",
     "e2e": "node e2e/flows.mjs",
     "e2e:wallet": "node e2e/wallet-modal.mjs",
+    "e2e:tx": "node e2e/wallet-tx.mjs",
     "typecheck": "tsc -b"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "@near-wallet-selector/meteor-wallet": "^10.1.4",
     "@near-wallet-selector/modal-ui": "^10.1.4",
     "@near-wallet-selector/my-near-wallet": "^10.1.4",
+    "buffer": "^6.0.3",
     "near-api-js": "^7.4.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
