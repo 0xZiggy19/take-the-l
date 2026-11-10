@@ -1,0 +1,10 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+
+// `base: "./"` + HashRouter = the build works from any path on any static host, no rewrites needed.
+export default defineConfig({
+  base: "./",
+  plugins: [react()],
+  define: { global: "globalThis" },
+  build: { target: "es2022", chunkSizeWarningLimit: 2000 },
+});

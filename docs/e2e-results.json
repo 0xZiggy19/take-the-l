@@ -1,0 +1,140 @@
+{
+  "when": "2026-11-10T07:04:36.870Z",
+  "base": "http://localhost:4174",
+  "ids": {
+    "W": 7,
+    "L": 8,
+    "G": 9
+  },
+  "results": [
+    {
+      "ok": true,
+      "name": "caller creates a call via the form",
+      "extra": "claim #7 https://testnet.nearblocks.io/txns/4FwA7kH8fccaiXUQmLvZ59J18jpXePmkzSP3wDySfQhn"
+    },
+    {
+      "ok": true,
+      "name": "fader1 fades 0.3 via the claim page",
+      "extra": "https://testnet.nearblocks.io/txns/BTZTcBtYrmgf4b9k3MbzR2L6cn4ReFcJQkqN8HRPmNon"
+    },
+    {
+      "ok": true,
+      "name": "fader2 fades 0.2",
+      "extra": "https://testnet.nearblocks.io/txns/GXFaZYu26iUDohJWPo9czhVAqdqLMiaJzUqTDJsidqaS"
+    },
+    {
+      "ok": true,
+      "name": "caller sees W/L buttons, fader does not",
+      "extra": ""
+    },
+    {
+      "ok": true,
+      "name": "screenshot: live claim page (caller view)",
+      "extra": ""
+    },
+    {
+      "ok": true,
+      "name": "caller resolves W",
+      "extra": "https://testnet.nearblocks.io/txns/Cry2PVc1SX8HEUv9H6e7jegKB9nLyb8oC9dZh42dCQYA"
+    },
+    {
+      "ok": true,
+      "name": "fader1 has nothing to collect after W",
+      "extra": ""
+    },
+    {
+      "ok": true,
+      "name": "caller creates a second call",
+      "extra": "claim #8"
+    },
+    {
+      "ok": true,
+      "name": "fader1 over-fades 1 NEAR (capped at stake)",
+      "extra": "https://testnet.nearblocks.io/txns/94TWvMBfD7pXnR26Pwm2d2r9MwU3sqQLkaJc7ppttxZM"
+    },
+    {
+      "ok": true,
+      "name": "caller takes the L",
+      "extra": "https://testnet.nearblocks.io/txns/ZsvMim5Vkoze5v3JA9j7vJCJgR1owrk18F9xyXRTJoL"
+    },
+    {
+      "ok": true,
+      "name": "fader1 sees claimable 2x and collects",
+      "extra": "claimable 0.996 Ⓝ https://testnet.nearblocks.io/txns/5fobXmKUWtLsCGBX3eEqBB8eyiemSphHH9WR3KrND7yg"
+    },
+    {
+      "ok": true,
+      "name": "caller creates a 1-minute call",
+      "extra": "claim #9"
+    },
+    {
+      "ok": true,
+      "name": "fader2 fades 0.2",
+      "extra": "https://testnet.nearblocks.io/txns/E2EEskyJSAN2VUrc27A7kgVvqwfNwM8ECRjc4NidhDs5"
+    },
+    {
+      "ok": true,
+      "name": "timeout button hidden before the deadline",
+      "extra": ""
+    },
+    {
+      "ok": true,
+      "name": "after the deadline, fader1 settles it as GHOSTED",
+      "extra": "https://testnet.nearblocks.io/txns/D5Mr2PED4xsRkQ26ofoeJ2k6XfEHBsyuFRAQ4i4ZVACL"
+    },
+    {
+      "ok": true,
+      "name": "fader2 collects after ghosting",
+      "extra": "https://testnet.nearblocks.io/txns/EisPJuQffT6xTE5AKL211UfWg5h5VMS7RZWJEEehQqZZ"
+    },
+    {
+      "ok": true,
+      "name": "feed renders without login (RPC only)",
+      "extra": "10 cards"
+    },
+    {
+      "ok": true,
+      "name": "filter chips work (L)",
+      "extra": ""
+    },
+    {
+      "ok": true,
+      "name": "scoreboard 'Ls taken' lists the caller",
+      "extra": ""
+    },
+    {
+      "ok": true,
+      "name": "profile shows W/L/ghost record",
+      "extra": "3W4L3👻"
+    },
+    {
+      "ok": true,
+      "name": "share button builds an x.com intent link",
+      "extra": "@0xZiggy_eth took the L 🫡 \"$BTC 150k by Sunday\""
+    },
+    {
+      "ok": true,
+      "name": "create form screenshot",
+      "extra": ""
+    },
+    {
+      "ok": true,
+      "name": "mobile: feed + claim page",
+      "extra": ""
+    }
+  ],
+  "txs": [
+    "https://testnet.nearblocks.io/txns/4FwA7kH8fccaiXUQmLvZ59J18jpXePmkzSP3wDySfQhn",
+    "https://testnet.nearblocks.io/txns/BTZTcBtYrmgf4b9k3MbzR2L6cn4ReFcJQkqN8HRPmNon",
+    "https://testnet.nearblocks.io/txns/GXFaZYu26iUDohJWPo9czhVAqdqLMiaJzUqTDJsidqaS",
+    "https://testnet.nearblocks.io/txns/Cry2PVc1SX8HEUv9H6e7jegKB9nLyb8oC9dZh42dCQYA",
+    "https://testnet.nearblocks.io/txns/3GozjK3f91UuwdSNXdpk4at6K3Jhr8hZsy2hYyWXS5QY",
+    "https://testnet.nearblocks.io/txns/94TWvMBfD7pXnR26Pwm2d2r9MwU3sqQLkaJc7ppttxZM",
+    "https://testnet.nearblocks.io/txns/ZsvMim5Vkoze5v3JA9j7vJCJgR1owrk18F9xyXRTJoL",
+    "https://testnet.nearblocks.io/txns/5fobXmKUWtLsCGBX3eEqBB8eyiemSphHH9WR3KrND7yg",
+    "https://testnet.nearblocks.io/txns/Dh5EmtugWwZDZkNQpYAZ67A1KC2ZjuF7CMgUUQo8bUGd",
+    "https://testnet.nearblocks.io/txns/E2EEskyJSAN2VUrc27A7kgVvqwfNwM8ECRjc4NidhDs5",
+    "https://testnet.nearblocks.io/txns/D5Mr2PED4xsRkQ26ofoeJ2k6XfEHBsyuFRAQ4i4ZVACL",
+    "https://testnet.nearblocks.io/txns/EisPJuQffT6xTE5AKL211UfWg5h5VMS7RZWJEEehQqZZ"
+  ]
+}
