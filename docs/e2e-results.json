@@ -1,26 +1,26 @@
 {
-  "when": "2026-11-10T07:04:36.870Z",
+  "when": "2026-11-10T07:57:35.184Z",
   "base": "http://localhost:4174",
   "ids": {
-    "W": 7,
-    "L": 8,
-    "G": 9
+    "W": 12,
+    "L": 13,
+    "G": 14
   },
   "results": [
     {
       "ok": true,
       "name": "caller creates a call via the form",
-      "extra": "claim #7 https://testnet.nearblocks.io/txns/4FwA7kH8fccaiXUQmLvZ59J18jpXePmkzSP3wDySfQhn"
+      "extra": "claim #12 https://testnet.nearblocks.io/txns/568rD3pUYTbkeKRJF2Q92gEcNJDnpuMR3AijXLHci1XH"
     },
     {
       "ok": true,
       "name": "fader1 fades 0.3 via the claim page",
-      "extra": "https://testnet.nearblocks.io/txns/BTZTcBtYrmgf4b9k3MbzR2L6cn4ReFcJQkqN8HRPmNon"
+      "extra": "https://testnet.nearblocks.io/txns/J5385hpN5NviwwGgdN5h6uMSWSDrvWFpXUaWZjsyuzBP"
     },
     {
       "ok": true,
       "name": "fader2 fades 0.2",
-      "extra": "https://testnet.nearblocks.io/txns/GXFaZYu26iUDohJWPo9czhVAqdqLMiaJzUqTDJsidqaS"
+      "extra": "https://testnet.nearblocks.io/txns/G7jdBHWt9kMru3rUK2AZqs3fvcDRK7AXeWBaxX875t4D"
     },
     {
       "ok": true,
@@ -35,7 +35,7 @@
     {
       "ok": true,
       "name": "caller resolves W",
-      "extra": "https://testnet.nearblocks.io/txns/Cry2PVc1SX8HEUv9H6e7jegKB9nLyb8oC9dZh42dCQYA"
+      "extra": "https://testnet.nearblocks.io/txns/4DWWfrxmFCc4KqnzxE4WaxNNseJLSdZwVjbTUKxsQrap"
     },
     {
       "ok": true,
@@ -45,32 +45,32 @@
     {
       "ok": true,
       "name": "caller creates a second call",
-      "extra": "claim #8"
+      "extra": "claim #13"
     },
     {
       "ok": true,
       "name": "fader1 over-fades 1 NEAR (capped at stake)",
-      "extra": "https://testnet.nearblocks.io/txns/94TWvMBfD7pXnR26Pwm2d2r9MwU3sqQLkaJc7ppttxZM"
+      "extra": "https://testnet.nearblocks.io/txns/3iptJ6Cn1zgo7qrRgce3nD8pcYLH9fp4MeCwkKpYPus4"
     },
     {
       "ok": true,
       "name": "caller takes the L",
-      "extra": "https://testnet.nearblocks.io/txns/ZsvMim5Vkoze5v3JA9j7vJCJgR1owrk18F9xyXRTJoL"
+      "extra": "https://testnet.nearblocks.io/txns/6DsqnkhQUHcmggBqdXGeHTwzpjBkWT96hSJR7msAxft5"
     },
     {
       "ok": true,
       "name": "fader1 sees claimable 2x and collects",
-      "extra": "claimable 0.996 Ⓝ https://testnet.nearblocks.io/txns/5fobXmKUWtLsCGBX3eEqBB8eyiemSphHH9WR3KrND7yg"
+      "extra": "claimable 0.996 Ⓝ https://testnet.nearblocks.io/txns/Ds9jx2bawHhVkGjSm2Pkg1LqDP2LrU7xcTPkdHfv5j43"
     },
     {
       "ok": true,
       "name": "caller creates a 1-minute call",
-      "extra": "claim #9"
+      "extra": "claim #14"
     },
     {
       "ok": true,
       "name": "fader2 fades 0.2",
-      "extra": "https://testnet.nearblocks.io/txns/E2EEskyJSAN2VUrc27A7kgVvqwfNwM8ECRjc4NidhDs5"
+      "extra": "https://testnet.nearblocks.io/txns/8NtJ9FKrFhA5mjg3EH9DSz19cx4qFHjq6HVLjGUmoJKw"
     },
     {
       "ok": true,
@@ -79,18 +79,23 @@
     },
     {
       "ok": true,
+      "name": "fade form closes after 3/4 of the call's time",
+      "extra": ""
+    },
+    {
+      "ok": true,
       "name": "after the deadline, fader1 settles it as GHOSTED",
-      "extra": "https://testnet.nearblocks.io/txns/D5Mr2PED4xsRkQ26ofoeJ2k6XfEHBsyuFRAQ4i4ZVACL"
+      "extra": "https://testnet.nearblocks.io/txns/3t1KxkayJ1HpsqBUXULDCZ8D3zkCP1q4Nc8SSZVfatib"
     },
     {
       "ok": true,
       "name": "fader2 collects after ghosting",
-      "extra": "https://testnet.nearblocks.io/txns/EisPJuQffT6xTE5AKL211UfWg5h5VMS7RZWJEEehQqZZ"
+      "extra": "https://testnet.nearblocks.io/txns/sQFzXudUQrTboMa23YR2pDEmnHh8txBRDYgN2S28KJj"
     },
     {
       "ok": true,
       "name": "feed renders without login (RPC only)",
-      "extra": "10 cards"
+      "extra": "15 cards"
     },
     {
       "ok": true,
@@ -105,7 +110,7 @@
     {
       "ok": true,
       "name": "profile shows W/L/ghost record",
-      "extra": "3W4L3👻"
+      "extra": "4W6L4👻"
     },
     {
       "ok": true,
@@ -124,17 +129,17 @@
     }
   ],
   "txs": [
-    "https://testnet.nearblocks.io/txns/4FwA7kH8fccaiXUQmLvZ59J18jpXePmkzSP3wDySfQhn",
-    "https://testnet.nearblocks.io/txns/BTZTcBtYrmgf4b9k3MbzR2L6cn4ReFcJQkqN8HRPmNon",
-    "https://testnet.nearblocks.io/txns/GXFaZYu26iUDohJWPo9czhVAqdqLMiaJzUqTDJsidqaS",
-    "https://testnet.nearblocks.io/txns/Cry2PVc1SX8HEUv9H6e7jegKB9nLyb8oC9dZh42dCQYA",
-    "https://testnet.nearblocks.io/txns/3GozjK3f91UuwdSNXdpk4at6K3Jhr8hZsy2hYyWXS5QY",
-    "https://testnet.nearblocks.io/txns/94TWvMBfD7pXnR26Pwm2d2r9MwU3sqQLkaJc7ppttxZM",
-    "https://testnet.nearblocks.io/txns/ZsvMim5Vkoze5v3JA9j7vJCJgR1owrk18F9xyXRTJoL",
-    "https://testnet.nearblocks.io/txns/5fobXmKUWtLsCGBX3eEqBB8eyiemSphHH9WR3KrND7yg",
-    "https://testnet.nearblocks.io/txns/Dh5EmtugWwZDZkNQpYAZ67A1KC2ZjuF7CMgUUQo8bUGd",
-    "https://testnet.nearblocks.io/txns/E2EEskyJSAN2VUrc27A7kgVvqwfNwM8ECRjc4NidhDs5",
-    "https://testnet.nearblocks.io/txns/D5Mr2PED4xsRkQ26ofoeJ2k6XfEHBsyuFRAQ4i4ZVACL",
-    "https://testnet.nearblocks.io/txns/EisPJuQffT6xTE5AKL211UfWg5h5VMS7RZWJEEehQqZZ"
+    "https://testnet.nearblocks.io/txns/568rD3pUYTbkeKRJF2Q92gEcNJDnpuMR3AijXLHci1XH",
+    "https://testnet.nearblocks.io/txns/J5385hpN5NviwwGgdN5h6uMSWSDrvWFpXUaWZjsyuzBP",
+    "https://testnet.nearblocks.io/txns/G7jdBHWt9kMru3rUK2AZqs3fvcDRK7AXeWBaxX875t4D",
+    "https://testnet.nearblocks.io/txns/4DWWfrxmFCc4KqnzxE4WaxNNseJLSdZwVjbTUKxsQrap",
+    "https://testnet.nearblocks.io/txns/CQShfJVJaE2z4nyCv9RAhtk2eF9nijGr7AxtECi1NpDj",
+    "https://testnet.nearblocks.io/txns/3iptJ6Cn1zgo7qrRgce3nD8pcYLH9fp4MeCwkKpYPus4",
+    "https://testnet.nearblocks.io/txns/6DsqnkhQUHcmggBqdXGeHTwzpjBkWT96hSJR7msAxft5",
+    "https://testnet.nearblocks.io/txns/Ds9jx2bawHhVkGjSm2Pkg1LqDP2LrU7xcTPkdHfv5j43",
+    "https://testnet.nearblocks.io/txns/2sMFAqVUbT7188DTFhyKmxw5NdhGaYk3KGVeF2FFyaxf",
+    "https://testnet.nearblocks.io/txns/8NtJ9FKrFhA5mjg3EH9DSz19cx4qFHjq6HVLjGUmoJKw",
+    "https://testnet.nearblocks.io/txns/3t1KxkayJ1HpsqBUXULDCZ8D3zkCP1q4Nc8SSZVfatib",
+    "https://testnet.nearblocks.io/txns/sQFzXudUQrTboMa23YR2pDEmnHh8txBRDYgN2S28KJj"
   ]
 }

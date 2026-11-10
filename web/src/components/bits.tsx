@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Claim, Status } from "../near/types";
-import { formatNear, nsToMs, shortAccount, timeLeft } from "../format";
+import { formatNear, isDao, nsToMs, shortAccount, timeLeft } from "../format";
 import { useNow } from "../hooks";
 
 export const STATUS_LABEL: Record<Status, string> = { Open: "LIVE", Won: "W", Lost: "L", Ghosted: "GHOSTED" };
@@ -21,6 +21,7 @@ export function AccountLink({ id, handle }: { id: string; handle?: string | null
   return (
     <Link to={`/u/${id}`} className="acct" onClick={(e) => e.stopPropagation()}>
       {handle ? <><b>@{handle}</b> <span className="muted">{shortAccount(id, 18)}</span></> : <b>{shortAccount(id)}</b>}
+      {isDao(id) && <DaoTag />}
     </Link>
   );
 }
@@ -46,4 +47,17 @@ export function Near({ y, digits }: { y: string | bigint; digits?: number }) {
 
 export function Spinner() {
   return <div className="spinner" aria-label="loading" />;
+}
+
+export function DaoTag() {
+  return <span className="dao-tag" title="A Sputnik DAO: its members vote on every call, fade and collect">DAO</span>;
+}
+
+export function TestnetHint() {
+  return (
+    <p className="testnet-hint muted">
+      This runs on <b>NEAR testnet</b>, so it's free: test NEAR has no value. No wallet yet?{" "}
+      <a href="https://testnet.mynearwallet.com/create" target="_blank" rel="noreferrer">Create a free testnet account ↗</a>
+    </p>
+  );
 }

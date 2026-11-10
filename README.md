@@ -2,16 +2,17 @@
 
 **Crypto-Twitter calls with skin in the game.** Anyone can post a call ("$NEAR 2x by Friday") with a NEAR stake. Anyone else can *fade* it by putting NEAR against it. The caller marks their own **W** or **L** before the deadline. If they go quiet, anyone can settle the call as an L and the caller is marked **ghosted**. Every call, result and ghosting is recorded permanently in a NEAR smart contract, and the scoreboard is built from that record.
 
-Built at **NEAR HACKATHON 2026**. Track: **Social Money** (`social`).
+Built at **NEAR HACKATHON 2026**. Tracks: **Social Money** (`social`) and **Open Innovation** (`open`).
 
 | | |
 |---|---|
 | Live contract (testnet) | [`takethel-eadf0a.testnet`](https://testnet.nearblocks.io/address/takethel-eadf0a.testnet) |
 | Hosted app | [take-the-l-near.vercel.app](https://take-the-l-near.vercel.app) (NEAR testnet; mirror: [0xziggy19.github.io/take-the-l](https://0xziggy19.github.io/take-the-l/)) |
 | Demo video / X post | _TBD_ |
+| Sputnik DAO demo | [`ttlcrew.sputnikv2.testnet`](https://testnet.nearblocks.io/address/ttlcrew.sputnikv2.testnet) faded a call, collected 2× into its treasury, and posted its own live call: [docs/dao-demo.md](docs/dao-demo.md) |
 | Contract design | [docs/DESIGN.md](docs/DESIGN.md) |
 | Recorded testnet runs | [docs/testnet-demo.md](docs/testnet-demo.md), [docs/e2e-results.json](docs/e2e-results.json) |
-| Screenshots | [docs/screenshots/](docs/screenshots/) |
+| Screenshots | [docs/screenshots/](docs/screenshots/) (12 and 13: a Sputnik DAO's call and profile on a phone; 14: the social preview card) |
 
 ![feed](docs/screenshots/01-feed.png)
 
@@ -22,12 +23,13 @@ On CT, calls cost nothing. People post "$X 10x by Friday" and quietly delete it 
 ## What it does
 
 1. **Make a call.** Write the claim (280 characters max), pick a stake, and pick a deadline. Deadlines run from 1 minute (for demos) to 30 days in the UI, and up to 365 days in the contract. You can add your X handle and a link to the original post.
-2. **Fade it.** Anyone except the caller can put NEAR against the call, up to the caller's stake. This makes every call an even-money 1:1 bet. Anything over the cap is refunded in the same transaction.
+2. **Fade it.** Anyone except the caller can put NEAR against the call, up to the caller's stake. This makes every call an even-money 1:1 bet. Anything over the cap is refunded in the same transaction. **Fades close once 3/4 of the time to the deadline has passed**, so nobody can pile in at the last second when the outcome is already obvious.
 3. **Settle it.** Before the deadline, the caller presses **"I called it: W"** or **"I take the L"**.
 4. **Ghosted.** Once the deadline passes, the caller can't settle the call any more. **Anyone** can press "Settle as GHOSTED", which pays out as an L and adds a permanent ghost to the caller's record.
 5. **Get paid.** The caller's payout is sent automatically when the call is settled. Faders press **Collect**, and the app shows exactly how much they can claim.
 6. **Scoreboard.** Each profile shows its W / L / 👻 record, hit rate, total staked and fade history. The **"Ls taken"** leaderboard ranks callers by L's taken plus ghosts, and there are tabs for Most Ws, Ghosts and Top faders.
-7. **Share on 𝕏.** Every call has an `x.com/intent/post` button that prefills text for the call's current state (live, W, L or ghosted) and links back to the call.
+7. **Communities (Sputnik DAO).** A Sputnik DAO can be a caller or a fader like any account: its members vote a `FunctionCall` proposal to `fade`, `create_claim`, `resolve` or `collect`, and the winnings land in the DAO treasury. That turns a DAO into a shared "fade fund" with a public record. DAO accounts get a **DAO** tag in the app.
+8. **Share on 𝕏.** Every call has an `x.com/intent/post` button that prefills text for the call's current state (live, W, L or ghosted) and links back to the call.
 
 ### Payout rules (S = caller stake, F = total fades ≤ S, f = one fade)
 
@@ -50,23 +52,26 @@ The product is the record. Money makes posting a call cost something, and the re
 
 ## How NEAR is used
 
-- **A self-custodial contract with no admin** (Rust, `near-sdk` 5.30). The contract has no owner, no admin methods and no upgrade path. Funds can only leave through the payout rules above.
+- **A self-custodial contract with no admin** (Rust, `near-sdk` 5.30). The contract has no owner, no admin methods and no upgrade method. Funds can only leave through the payout rules above. Honest note: during the hackathon the testnet contract account still holds its deploy key (used once on 2026-11-10 to ship the fade cutoff, a code-only upgrade with state kept). A mainnet deploy would delete that full-access key so the code is locked.
 - **Attached deposits.** Stakes and fades are `#[payable]` calls with the NEAR attached. Storage is paid by the user who adds the data: the contract measures `env::storage_usage()` before and after the write and deducts that cost from the deposit.
 - **Promise transfers with callbacks.** Payouts are `Promise::transfer`s, each followed by a `#[private]` `on_payout` callback. If a transfer fails, the callback makes the amount claimable again. The "paid" flags are set before the transfer, so nothing can be paid twice.
 - **Pull payments.** The caller is paid automatically, and faders `collect`. Each call takes a fixed amount of gas however many faders a claim has (up to 50).
 - **Events.** NEP-297 `EVENT_JSON` logs (`claim_created`, `claim_faded`, `claim_resolved`, `payout_collected`) are emitted for indexers.
+- **Sputnik DAO.** Calls, fades and payouts work from a Sputnik DAO (sputnikv2) account with no special code: the DAO votes on a `FunctionCall` proposal and the contract sees the DAO as the predecessor. `scripts/dao-demo.sh` creates a DAO with a 2-member council and runs fade → L → collect plus a DAO-made call, recorded in [docs/dao-demo.md](docs/dao-demo.md).
 - **Named accounts.** Named accounts (`alice.testnet`) are the identity layer: profiles and scoreboards are keyed by NEAR account, and callers can attach an X handle.
 - **Logged-out reads.** Read-only views (`list_claims`, `get_claim`, `get_profile`, `list_profiles`, `get_claimable`, …) go straight to public JSON-RPC, so the feed, call pages and scoreboard work **without a wallet**.
 - **NEAR Wallet Selector.** The app connects through Wallet Selector with MyNearWallet, Meteor, HOT and Intear. Sign-in requests a function-call key for the contract, so calls that attach no deposit (resolve, collect, settle-as-ghosted) can be signed by the key the wallet creates at sign-in, usually without another prompt. Calls that attach NEAR are approved in the wallet.
 
 ## Try it (judges): do X, see Y
 
-Everything below runs against the **live testnet contract** `takethel-eadf0a.testnet`. You need Node 20+ for the app. A NEAR testnet wallet is optional.
+Everything below runs against the **live testnet contract** `takethel-eadf0a.testnet`. The fastest way is the hosted app, **https://take-the-l-near.vercel.app** (works on phones). To run it yourself you need Node 20+. A NEAR testnet wallet is optional (free at https://testnet.mynearwallet.com).
 
 ### A. In the app (about 2 minutes)
 
+Open https://take-the-l-near.vercel.app, or run it locally:
+
 ```bash
-git clone <this repo> && cd take-the-l/web
+git clone https://github.com/0xZiggy19/take-the-l && cd take-the-l/web
 npm install
 npm run dev            # open the printed http://localhost:5173
 ```
@@ -78,9 +83,10 @@ npm run dev            # open the printed http://localhost:5173
 5. **Open Scoreboard → "Ls taken".** You should see `caller-eadf0a.testnet` ranked with its L and ghost counts. Click it to open the profile with its **W / L / 👻** record and hit rate.
 6. **Click Connect.** The NEAR Wallet Selector should open with MyNearWallet, Meteor, HOT and Intear. Sign in with a testnet account. You can get one for free at https://testnet.mynearwallet.com.
 7. **Go to New call.** Enter `$NEAR 2x by Friday`, stake `0.5`, deadline `3 min`, and click **Stake it**. After you approve in the wallet, you should land on the new call page with a **LIVE** badge and a running countdown.
-8. **Fade the call from a second account** (another browser profile): enter `0.2` and click **Fade it**. The blue faded bar should grow, and the fader should appear in the list.
+8. **Fade the call from a second account** (another browser profile) within the first 3/4 of its time (the page shows "Fades close in …"): enter `0.2` and click **Fade it**. The blue faded bar should grow, and the fader should appear in the list. After the cutoff the fade form is replaced by "Fading is closed…".
 9. **As the caller, click "I take the L".** The badge should turn into a red **L** and the caller's unmatched stake should come back. As the fader, a **Collect 0.4 Ⓝ** button should appear. Click it and the button should disappear once you've been paid.
 10. **Make another call with a `1 min` deadline and don't settle it.** When the countdown hits 0, a purple **"Settle as GHOSTED 👻"** button should appear for anyone. Click it: the badge should turn to **GHOSTED** and the caller's 👻 count should go up.
+11. **Open the DAO's call** (the feed card by `ttlcrew.sputnikv2.testnet` with the blue **DAO** tag, "Community call: $NEAR above $5 before Dec 1"). It stays LIVE until 2026-11-24, so you can fade it. Open the DAO's profile: it shows 1 call and 1 fade, and the note that its members vote on every action.
 
 ### B. With near-cli only (no browser)
 
@@ -92,20 +98,26 @@ near contract call-function as-read-only $C get_profile json-args '{"account_id"
 ```
 You should see JSON claims with `status` set to `Open`, `Won`, `Lost` or `Ghosted`, and a profile with `wins`, `losses` and `ghosted` counts.
 
+To run the Sputnik DAO flow (creates a DAO through `sputnikv2.testnet`, about 7 testnet NEAR from FADER1, about 1 minute):
+```bash
+CONTRACT=$C CALLER=caller-$USER-ttl.testnet FADER1=fader1-$USER-ttl.testnet FADER2=fader2-$USER-ttl.testnet DAO_NAME=ttl-$USER ./scripts/dao-demo.sh
+```
+Every line should print `OK`, each proposal should end `"status": "Approved"`, the claim should list the DAO as a fader, and "claimable after" should be `"0"` (the DAO collected its 2×).
+
 To run the full W / L / ghosted / rejection scenario with your own faucet accounts (takes about 3 minutes):
 ```bash
 for n in caller fader1 fader2; do near account create-account sponsor-by-faucet-service $n-$USER-ttl.testnet autogenerate-new-keypair save-to-legacy-keychain network-config testnet create; done
 CONTRACT=$C CALLER=caller-$USER-ttl.testnet FADER1=fader1-$USER-ttl.testnet FADER2=fader2-$USER-ttl.testnet ./scripts/demo-testnet.sh
 ```
-Every line should print `OK` or `FAILED` with a nearblocks link. The `FAILED` lines are the deliberate rejection checks: a double resolve, a fade on your own call, a resolve by someone who isn't the caller, a fade after the deadline, a collect after a W, and an early timeout. Each one shows the contract's panic message.
+Every line should print `OK` or `FAILED` with a nearblocks link. The `FAILED` lines are the deliberate rejection checks: a double resolve, a fade on your own call, a resolve by someone who isn't the caller, a fade after the deadline (also after the 3/4 fade cutoff), a collect after a W, and an early timeout. Each one shows the contract's panic message.
 
 ### C. Contract tests
 
 ```bash
-cargo test --lib                                  # 25 unit tests
+cargo test --lib                                  # 28 unit tests
 cargo test --test integration -- --test-threads=2 # 5 sandbox tests on a real local NEAR node
 ```
-All 30 tests should pass. They cover the happy W and L paths, timeout as L, the no-fade refund, double resolve, a resolve by someone who isn't the caller, a fade after the deadline, the fade cap with refund, double collect, a failed-payout restore and the private callback.
+All 33 tests should pass. They cover the happy W and L paths, timeout as L, the no-fade refund, double resolve, a resolve by someone who isn't the caller, a fade after the deadline, the 3/4 fade cutoff (and that the caller can still settle after it), the fade cap with refund, double collect, a failed-payout restore and the private callback.
 
 ## Run it locally
 
@@ -129,6 +141,7 @@ src/lib.rs            contract
 src/tests.rs          unit tests
 tests/integration.rs  sandbox tests (near-sandbox + near-api)
 scripts/demo-testnet.sh   CLI end-to-end demo on testnet
+scripts/dao-demo.sh       Sputnik DAO as fader and caller on testnet
 web/                  Vite + React + TS frontend
 web/e2e/              Playwright (headless Chrome) flows
 docs/                 design, testnet run logs, screenshots
@@ -143,11 +156,17 @@ docs/                 design, testnet run logs, screenshots
   - `near-api-js` 7 (used only by the E2E signer)
   - `@fontsource/archivo-black`, `@fontsource-variable/space-grotesk` and `@fontsource/jetbrains-mono`
 - **Tooling:** `near-cli-rs` 0.31 and `playwright-core` 1.65 (headless Chrome).
+- **On-chain dependency (not code in this repo):** the Sputnik DAO v2 factory `sputnikv2.testnet` (https://github.com/near-daos/sputnik-dao-contract), used by `scripts/dao-demo.sh`.
 - **Starting point:** the scaffold came from `cargo near new` and `npm create vite` (react-ts). No other templates were used.
 
 ## AI disclosure
 
-All of the code in this repo (contract, tests, frontend, scripts and docs) was **written by an AI coding agent** directing the build for the team lead, who doesn't code. All of it was written during the hackathon window (starting 2026-11-10). There is no pre-hackathon baseline.
+All of the code in this repo (contract, tests, frontend, scripts, docs and the social preview image) was **generated by an AI coding agent**, working for the team lead, who doesn't code and made the product decisions. Everything was written on 2026-11-10, inside the hackathon window (2026-10-19 to 2026-11-14). There is no pre-hackathon baseline and no other project by the same team.
+
+## Track fit
+
+- **Social Money (`social`)**: a public, money-backed reputation record for CT callers. The stake is a programmable reward (fades pay out 2× by rule, no middleman), and the scoreboard is reputation anyone can read on-chain. Communities can run it from a **Sputnik DAO** treasury as a shared fade fund, voting on each fade and collect (see above). We did not integrate Trezu.
+- **Open Innovation (`open`)**: a new primitive, a self-resolved call with no oracle where honesty is enforced by a permanent record and the ghosting rule.
 
 ## License
 

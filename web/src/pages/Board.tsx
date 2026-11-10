@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { allProfiles } from "../near/rpc";
 import { usePoll } from "../hooks";
-import { Near, Spinner } from "../components/bits";
-import { shortAccount } from "../format";
+import { DaoTag, Near, Spinner } from "../components/bits";
+import { isDao, shortAccount } from "../format";
 import type { ProfileView } from "../near/types";
 
 type Tab = "ls" | "ws" | "ghosts" | "faders";
@@ -38,7 +38,7 @@ export default function Board() {
           {rows.map((p, i) => (
             <li key={p.account_id} className={i < 3 ? `top top-${i + 1}` : ""}>
               <span className="rank">{i + 1}</span>
-              <Link to={`/u/${p.account_id}`} className="acct"><b>{shortAccount(p.account_id, 28)}</b></Link>
+              <Link to={`/u/${p.account_id}`} className="acct"><b>{shortAccount(p.account_id, 28)}</b>{isDao(p.account_id) && <DaoTag />}</Link>
               <span className="rec muted">{p.wins}W · {p.losses}L · {p.ghosted}👻</span>
               <span className="score">{t.show(p)}</span>
             </li>

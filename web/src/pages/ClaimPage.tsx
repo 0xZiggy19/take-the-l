@@ -4,8 +4,8 @@ import { api } from "../near/rpc";
 import { usePoll, useNow } from "../hooks";
 import { useWallet, cleanError } from "../near/wallet";
 import { useToast } from "../components/Toast";
-import { AccountLink, Countdown, MatchBar, Near, Spinner, StatusBadge } from "../components/bits";
-import { formatNear, nsToMs, parseNear, ago } from "../format";
+import { AccountLink, Countdown, MatchBar, Near, Spinner, StatusBadge, TestnetHint } from "../components/bits";
+import { formatNear, nsToMs, parseNear, ago, fadesCloseMs, timeLeft } from "../format";
 import { shareIntent } from "../share";
 import { CONTRACT_ID, EXPLORER } from "../config";
 import type { Claim } from "../near/types";
@@ -23,6 +23,8 @@ export default function ClaimPage() {
   if (claim === null) return <div className="empty">Call #{id} doesn't exist. <Link to="/">Back to the feed</Link></div>;
 
   const expired = nsToMs(claim.deadline) <= now;
+  const fadeClose = fadesCloseMs(claim);
+  const fadesOpen = claim.status === "Open" && now < fadeClose;
   const refresh = () => { reload(); reloadClaimable(); };
 
   return (
@@ -41,6 +43,11 @@ export default function ClaimPage() {
         </div>
         <MatchBar claim={claim} />
         <div className="meta-row">
+          {claim.status === "Open" && !expired && (
+            <span className={fadesOpen ? "c-fade" : "muted"} data-testid="fade-window">
+              {fadesOpen ? `Fades close in ${timeLeft(fadeClose - now)}` : "Fading closed"}
+            </span>
+          )}
           {claim.status === "Open" ? <Countdown deadline={claim.deadline} /> : (
             <span className="muted">Settled {claim.resolved_at && ago(nsToMs(claim.resolved_at))}{claim.resolved_by && claim.resolved_by !== claim.caller && <> by <AccountLink id={claim.resolved_by} /></>}</span>
           )}
@@ -53,7 +60,7 @@ export default function ClaimPage() {
         </div>
       </div>
 
-      <Actions claim={claim} expired={expired} claimable={claimable ?? "0"} onDone={refresh} />
+      <Actions claim={claim} expired={expired} fadesOpen={fadesOpen} claimable={claimable ?? "0"} onDone={refresh} />
 
       <div className="card">
         <h3>Faders ({claim.fades.length})</h3>
@@ -80,7 +87,7 @@ function Verdict({ claim }: { claim: Claim }) {
   return null;
 }
 
-function Actions({ claim, expired, claimable, onDone }: { claim: Claim; expired: boolean; claimable: string; onDone: () => void }) {
+function Actions({ claim, expired, fadesOpen, claimable, onDone }: { claim: Claim; expired: boolean; fadesOpen: boolean; claimable: string; onDone: () => void }) {
   const { accountId, signIn, call } = useWallet();
   const toast = useToast();
   const [busy, setBusy] = useState<string | null>(null);
@@ -105,8 +112,9 @@ function Actions({ claim, expired, claimable, onDone }: { claim: Claim; expired:
     if (claim.status !== "Open" && !expired) return null;
     return (
       <div className="card actions">
-        <p>{claim.status === "Open" ? "Think it's cap? Connect a wallet to fade it." : "Connect to collect winnings or settle this call."}</p>
+        <p>{claim.status === "Open" && !expired ? (fadesOpen ? "Think it's cap? Connect a wallet to fade it." : "Fading is closed. The caller has until the deadline to call W or L.") : "Connect to collect winnings or settle this call."}</p>
         <button className="btn btn-primary" onClick={signIn} data-testid="btn-connect-inline">Connect wallet</button>
+        <TestnetHint />
       </div>
     );
   }
@@ -131,6 +139,8 @@ function Actions({ claim, expired, claimable, onDone }: { claim: Claim; expired:
           </div>
         </div>,
       );
+    } else if (!fadesOpen) {
+      parts.push(<p key="closed" className="muted" data-testid="fades-closed">Fading is closed for the last quarter of a call's time, so nobody can pile in once the outcome is obvious. The caller has until the deadline to call W or L.</p>);
     } else if (remaining > 0n) {
       let dep: bigint | null = null;
       try { dep = parseNear(amount); } catch { dep = null; }

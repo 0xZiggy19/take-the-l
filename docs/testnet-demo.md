@@ -1,6 +1,8 @@
 # Testnet demo run (2026-11-10)
 
 Contract: [takethel-eadf0a.testnet](https://testnet.nearblocks.io/address/takethel-eadf0a.testnet). Caller: caller-eadf0a.testnet. Faders: fader1-eadf0a.testnet, fader2-eadf0a.testnet.
+Recorded before the 2026-11-10 fade-cutoff upgrade (code-only redeploy, state kept). A fade after the deadline now fails with "Too late to fade: fading is closed for the last quarter of a call's time" instead of the older message below.
+
 Deploy + init tx: https://testnet.nearblocks.io/txns/B6T7dxFKCS4xBZvukc5NqVTu2ho3sSLdBR1bcArtwGp3
 
 Produced by `scripts/demo-testnet.sh`. Rows marked FAILED are deliberate rejection checks.

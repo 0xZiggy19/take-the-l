@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useWallet, cleanError } from "../near/wallet";
 import { useToast } from "../components/Toast";
 import { parseNear, formatNear, timeLeft } from "../format";
+import { TestnetHint } from "../components/bits";
 
 const STAKES = ["0.1", "0.5", "1", "5"];
 const DURATIONS: { label: string; minutes: number; demo?: boolean }[] = [
@@ -88,7 +89,7 @@ export default function Create() {
               </button>
             ))}
           </div>
-          <small className="muted">You have to call W or L within {DURATIONS.find((d) => d.minutes === minutes)?.label ?? timeLeft(minutes * 60_000)}. Miss it and anyone can settle it as an L.</small>
+          <small className="muted">You have to call W or L within {DURATIONS.find((d) => d.minutes === minutes)?.label ?? timeLeft(minutes * 60_000)}. Miss it and anyone can settle it as an L. Fades close after {timeLeft(minutes * 45_000)}, so nobody can fade at the last second.</small>
         </label>
 
         <div className="row2">
@@ -114,6 +115,7 @@ export default function Create() {
             <button type="button" className="btn btn-primary btn-lg" onClick={signIn}>Connect wallet</button>
           )}
         </div>
+        {!accountId && <TestnetHint />}
       </form>
     </section>
   );

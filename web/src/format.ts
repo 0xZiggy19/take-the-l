@@ -41,3 +41,13 @@ export function ago(ms: number): string {
   if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
   return `${Math.floor(s / 86400)}d ago`;
 }
+
+/** Fades close once 3/4 of the time from posting to the deadline has passed (same rule as the contract). */
+export function fadesCloseMs(c: { created_at: string; deadline: string }): number {
+  const start = BigInt(c.created_at), end = BigInt(c.deadline);
+  return Number((start + ((end - start) / 4n) * 3n) / 1_000_000n);
+}
+
+const DAO_RE = /\.(sputnikv2\.testnet|sputnik-dao\.near)$/;
+/** Sputnik DAO accounts (created by the sputnikv2 / sputnik-dao factory). */
+export const isDao = (a: string) => DAO_RE.test(a);

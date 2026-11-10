@@ -2,7 +2,8 @@ import { useParams } from "react-router-dom";
 import { api } from "../near/rpc";
 import { usePoll } from "../hooks";
 import { ClaimCard } from "../components/ClaimCard";
-import { Near, Spinner } from "../components/bits";
+import { DaoTag, Near, Spinner } from "../components/bits";
+import { isDao } from "../format";
 import { EXPLORER } from "../config";
 
 export default function Profile() {
@@ -25,6 +26,7 @@ export default function Profile() {
         <div>
           <h1 className="page-title">{handle ? `@${handle}` : account}</h1>
           <a className="muted mono" href={`${EXPLORER}/address/${account}`} target="_blank" rel="noreferrer">{account} ↗</a>
+          {isDao(account) && <p className="muted dao-note"><DaoTag /> A Sputnik DAO. Its members vote on every call it makes, every fade and every collect, and the winnings go back to the DAO treasury.</p>}
         </div>
         <div className="record" data-testid="record">
           <span className="c-w">{p.wins}W</span>

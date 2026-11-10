@@ -153,6 +153,31 @@ fn fade_after_deadline_rejected() {
 }
 
 #[test]
+fn fade_allowed_before_cutoff() {
+    // 10-minute claim: fades close at 7.5 minutes.
+    let (mut c, id) = setup(1);
+    ctx(&bob(), near(1), 7 * MIN);
+    c.fade(id);
+    assert_eq!(fades_close_at(&c.get_claim(id).unwrap()), 7 * MIN + MIN / 2);
+}
+
+#[test]
+#[should_panic(expected = "fading is closed")]
+fn fade_in_last_quarter_rejected() {
+    let (mut c, id) = setup(1);
+    ctx(&bob(), near(1), 7 * MIN + MIN / 2);
+    c.fade(id);
+}
+
+#[test]
+fn caller_can_still_resolve_after_fade_cutoff() {
+    let (mut c, id) = setup(1);
+    ctx(&alice(), NearToken::from_yoctonear(0), 9 * MIN);
+    let _ = c.resolve(id, Outcome::L);
+    assert_eq!(c.get_claim(id).unwrap().status, Status::Lost);
+}
+
+#[test]
 #[should_panic(expected = "already resolved")]
 fn fade_after_resolve_rejected() {
     let (mut c, id) = setup(1);

@@ -160,6 +160,10 @@ await step("timeout button hidden before the deadline", async () => {
   await f1.getByTestId("countdown").waitFor();
   if (await f1.getByTestId("btn-timeout").count()) throw new Error("timeout visible early");
 });
+await step("fade form closes after 3/4 of the call's time", async () => {
+  await f1.getByTestId("fades-closed").waitFor({ timeout: 70_000 });
+  if (await f1.getByTestId("btn-fade").count()) throw new Error("fade form still visible after cutoff");
+});
 await step("after the deadline, fader1 settles it as GHOSTED", async () => {
   await f1.getByTestId("btn-timeout").waitFor({ timeout: 100_000 });
   await f1.screenshot({ path: `${SHOTS}/06-claim-awaiting-timeout.png`, fullPage: true });

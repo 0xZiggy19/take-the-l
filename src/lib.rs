@@ -4,7 +4,8 @@
 //!
 //! * A **caller** posts a claim ("$NEAR 2x by Friday") with a NEAR stake and a deadline.
 //! * Anyone else can **fade** it by putting NEAR against it. Total fades are capped at the
-//!   caller's stake, so every claim is an even-money (1:1) book.
+//!   caller's stake, so every claim is an even-money (1:1) book. Fades close once 3/4 of the
+//!   time to the deadline has passed (no last-second fades when the outcome is obvious).
 //! * Before the deadline the caller self-resolves **W** or **L**. There is no oracle by design:
 //!   the caller's public record is the product.
 //! * If the caller stays silent past the deadline, anyone can call `resolve_timeout` and the
@@ -254,8 +255,8 @@ impl Contract {
         let claim = self.claim_mut(claim_id);
         require!(claim.status == Status::Open, "Claim is already resolved");
         require!(
-            now < claim.deadline.0,
-            "Claim deadline has passed, fading is closed"
+            now < fades_close_at(claim),
+            "Too late to fade: fading is closed for the last quarter of a call's time"
         );
         require!(claim.caller != fader, "You can't fade your own call");
         let remaining = claim.stake.saturating_sub(claim.total_faded);
@@ -554,6 +555,14 @@ impl Contract {
         self.caller_claims.flush();
         self.fader_claims.flush();
     }
+}
+
+/// Fades close once 3/4 of the time between posting and the deadline has passed, so nobody can
+/// pile in at the last second when the outcome is already obvious. The caller can still settle
+/// until the deadline.
+pub fn fades_close_at(claim: &Claim) -> u64 {
+    let (start, end) = (claim.created_at.0, claim.deadline.0);
+    start + (end.saturating_sub(start) / 4) * 3
 }
 
 fn caller_payout(claim: &Claim) -> NearToken {

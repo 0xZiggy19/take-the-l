@@ -159,3 +159,11 @@ h3 { margin: 0 0 8px; }
   .stats > div { min-width: 0; flex: 1 1 40%; }
   .lede { font-size: 17px; }
 }
+
+/* testnet + DAO bits */
+.net-pill { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--open); border: 1px solid rgba(255,214,10,.4); background: rgba(255,214,10,.08); padding: 3px 8px; border-radius: 999px; margin-left: -12px; }
+.testnet-hint { font-size: 14px; margin: 12px 0 0; }
+.testnet-hint a { color: var(--fade); }
+.dao-tag { display: inline-block; margin-left: 6px; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .5px; color: #0b0b0f; background: var(--fade); padding: 1px 6px; border-radius: 5px; vertical-align: middle; }
+.dao-note { margin: 10px 0 0; max-width: 560px; }
+@media (max-width: 720px) { .net-pill { margin-left: -4px; } }

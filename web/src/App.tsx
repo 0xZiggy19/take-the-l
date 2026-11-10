@@ -15,6 +15,7 @@ function Header() {
       <Link to="/" className="logo" aria-label="Take the L home">
         TAKE THE <span className="logo-l">L</span>
       </Link>
+      {NETWORK !== "mainnet" && <span className="net-pill" title="Runs on NEAR testnet: free test NEAR, no real money">{NETWORK}</span>}
       <nav>
         <NavLink to="/" end>Feed</NavLink>
         <NavLink to="/new">New call</NavLink>
